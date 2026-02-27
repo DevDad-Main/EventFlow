@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Ticket, Menu, X, Search } from "lucide-react";
-import { SignInButton, UserButton, SignedIn, SignedOut } from "@clerk/clerk-react";
+import { SignInButton, UserButton, SignedIn, SignedOut, useAuth as useClerkAuth } from "@clerk/clerk-react";
 import { motion, AnimatePresence } from "framer-motion";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 const navLinks = [
   { name: "Discover", path: "/" },
@@ -10,9 +12,57 @@ const navLinks = [
   { name: "Venues", path: "/venues" },
 ];
 
+function useAuthSync() {
+  const { isLoaded, isSignedIn, getToken } = useClerkAuth();
+
+  useEffect(() => {
+    if (!isLoaded || !isSignedIn) return;
+
+    const syncUser = async () => {
+      console.log("🔄 Starting auth sync...");
+      
+      try {
+        const token = await getToken();
+        console.log("🔑 Got Clerk token:", token ? "yes" : "no");
+
+        if (!token) {
+          console.error("❌ No Clerk token available");
+          return;
+        }
+
+        console.log("📡 Calling backend /current-user...");
+        const response = await fetch(`${API_URL}/current-user`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        console.log("📬 Backend response status:", response.status);
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error("❌ Backend error:", errorData);
+          return;
+        }
+
+        const data = await response.json();
+        console.log("✅ Backend user synced:", data);
+      } catch (err) {
+        console.error("❌ Sync error:", err);
+      }
+    };
+
+    syncUser();
+  }, [isLoaded, isSignedIn, getToken]);
+}
+
 export default function Navbar() {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
+  // This hook will sync user with backend when signed in
+  useAuthSync();
 
   return (
     <>
