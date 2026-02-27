@@ -1,5 +1,6 @@
 import React from "react";
 import { Ticket, Menu, Search } from "lucide-react";
+import { SignInButton, UserButton, SignedIn, SignedOut } from "@clerk/clerk-react";
 
 export default function Navbar() {
   return (
@@ -49,15 +50,29 @@ export default function Navbar() {
           <button className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/60 hover:text-white transition-all">
             <Search size={15} />
           </button>
-          <button
-            className="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
-            style={{
-              fontFamily: "'Space Grotesk', sans-serif",
-              background: "linear-gradient(135deg, #5C61F4, #7C3AED)",
-            }}
-          >
-            Sign In
-          </button>
+          <SignedOut>
+            <SignInButton mode="modal">
+              <button
+                className="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90 cursor-pointer"
+                style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  background: "linear-gradient(135deg, #5C61F4, #7C3AED)",
+                }}
+              >
+                Sign In
+              </button>
+            </SignInButton>
+          </SignedOut>
+          <SignedIn>
+            <UserButton 
+              afterSignOutUrl="/"
+              appearance={{
+                elements: {
+                  avatarBox: "w-9 h-9"
+                }
+              }}
+            />
+          </SignedIn>
           <button className="md:hidden w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/60">
             <Menu size={15} />
           </button>
