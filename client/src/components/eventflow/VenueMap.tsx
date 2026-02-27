@@ -20,10 +20,6 @@ export default function VenueMap({ venue }: VenueMapProps) {
     `${venue.name} ${venue.address} ${venue.city}`
   )}`;
 
-  // Use a static map image from Unsplash as placeholder for the map
-  const mapPlaceholder =
-    "https://images.unsplash.com/photo-1524661135-423995f22d0b?w=1200&q=70";
-
   return (
     <section>
       <h2
@@ -40,49 +36,37 @@ export default function VenueMap({ venue }: VenueMapProps) {
           boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
         }}
       >
-        {/* Map image */}
-        <div className="relative h-56 overflow-hidden">
-          <img
-            src={mapPlaceholder}
-            alt="Map"
-            className="w-full h-full object-cover"
-            style={{ filter: "saturate(0.7) brightness(0.6)" }}
+        {/* Google Maps Embed */}
+        <div className="relative h-64 overflow-hidden">
+          <iframe
+            src={`https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d193595.15830869428!2d${venue.lng || -74.006}!3d${venue.lat || 40.7128}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1s${encodeURIComponent(venue.name)}!5e0!3m2!1sen!2sus!4v1700000000000!5m2!1sen!2sus`}
+            width="100%"
+            height="100%"
+            style={{ border: 0, filter: "grayscale(20%) contrast(1.1)" }}
+            allowFullScreen
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
           />
-          {/* Frosted glass overlay with pin */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div
-              className="flex flex-col items-center gap-1"
-              style={{ backdropFilter: "blur(0px)" }}
-            >
-              <div
-                className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg"
-                style={{
-                  background: "linear-gradient(135deg, #5C61F4, #7C3AED)",
-                  boxShadow: "0 0 0 4px rgba(92,97,244,0.3)",
-                }}
-              >
-                <MapPin size={20} color="white" fill="white" />
-              </div>
-              <div
-                className="px-3 py-1.5 rounded-lg text-xs font-semibold text-white text-center max-w-[180px]"
-                style={{
-                  background: "rgba(25,30,40,0.85)",
-                  backdropFilter: "blur(12px)",
-                  border: "1px solid rgba(255,255,255,0.1)",
-                  fontFamily: "'Space Grotesk', sans-serif",
-                }}
-              >
-                {venue.name}
-              </div>
-            </div>
-          </div>
-          {/* Open full map overlay */}
+          {/* Click to open overlay */}
           <a
             href={googleMapsUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="absolute inset-0"
-          />
+            className="absolute inset-0 flex items-center justify-center bg-black/20 hover:bg-black/30 transition-colors"
+          >
+            <div
+              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white"
+              style={{
+                background: "rgba(25,30,40,0.9)",
+                backdropFilter: "blur(8px)",
+                border: "1px solid rgba(255,255,255,0.1)",
+                fontFamily: "'Space Grotesk', sans-serif",
+              }}
+            >
+              <ExternalLink size={14} />
+              Open in Google Maps
+            </div>
+          </a>
         </div>
 
         {/* Venue info + directions */}

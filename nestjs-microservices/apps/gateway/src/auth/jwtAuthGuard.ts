@@ -47,14 +47,20 @@ export class JwtAuthGuard implements CanActivate {
       throw new UnauthorizedException('Missing Authorization Token');
     }
 
+    console.log('🔐 Auth attempt - Token present:', !!token);
+
     const identifyAuthUser =
       await this.authService.verifyAndBuildContext(token);
+
+    console.log('✅ Token verified, user:', identifyAuthUser.clerkUserId);
 
     const dbUser = await this.userService.upsertAuthUser({
       clerkUserId: identifyAuthUser.clerkUserId,
       email: identifyAuthUser.email,
       name: identifyAuthUser.name,
     });
+
+    console.log('📝 Upserting user to DB:', dbUser);
 
     const user = {
       ...identifyAuthUser,

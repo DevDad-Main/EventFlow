@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { eventData } from "@/data/eventData";
-import Navbar from "./eventflow/Navbar";
 import HeroModule from "./eventflow/HeroModule";
 import TicketTiers from "./eventflow/TicketTiers";
 import StickyCTA from "./eventflow/StickyCTA";
@@ -9,6 +8,7 @@ import VenueMap from "./eventflow/VenueMap";
 import RelatedEvents from "./eventflow/RelatedEvents";
 import ShareSave from "./eventflow/ShareSave";
 import { Toaster } from "sonner";
+import Navbar from "./eventflow/Navbar";
 
 function Home() {
   const [isSaved, setIsSaved] = useState(false);
