@@ -2,9 +2,22 @@ import { Module } from '@nestjs/common';
 import { GatewayController } from './gateway.controller';
 import { GatewayService } from './gateway.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { ConfigModule } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
+import { UserModule } from './users/user.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
+    //NOTE: Loads our .env file into the process.env
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    //NOTE: Connect gateway to our mongo users
+    MongooseModule.forRoot(process.env.MONGO_URI as string),
+    UserModule,
+    AuthModule,
+
     ClientsModule.register([
       {
         name: 'CATALOG_CLIENT',
