@@ -12,6 +12,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './users/user.module';
 import { AuthModule } from './auth/auth.module';
 import { AuthController } from './auth/auth.controller';
+import { EventsModule } from './events/events.module';
+import { EventsController } from './events/events.controller';
 
 @Module({
   imports: [
@@ -31,6 +33,9 @@ import { AuthController } from './auth/auth.controller';
     UserModule,
     // Import AuthModule - provides authentication/authorization functionality
     AuthModule,
+
+    // Import EventsModule - provides event-related functionality (database operations)
+    EventsModule,
 
     // ClientsModule - Registers microservice clients for inter-service communication
     // This gateway communicates with other microservices via RabbitMQ (RMQ)
@@ -73,7 +78,7 @@ import { AuthController } from './auth/auth.controller';
   ],
   // Controllers - Handle incoming HTTP requests and return responses
   // GatewayController handles routes like GET /health
-  controllers: [GatewayController, AuthController],
+  controllers: [GatewayController, AuthController, EventsController],
   // Providers - Services, guards, factories that can be injected into other providers
   // GatewayService is a standard service (marked with @Injectable)
   providers: [GatewayService],
