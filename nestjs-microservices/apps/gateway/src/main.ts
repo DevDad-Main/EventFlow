@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { GatewayModule } from './gateway.module';
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 
 /**
  * Bootstrap function - Entry point for the NestJS application.
@@ -16,6 +16,15 @@ async function bootstrap() {
   // Create the NestJS application instance from the root module (GatewayModule)
   // This is where all your modules, controllers, and providers get wired together
   const app = await NestFactory.create(GatewayModule);
+
+  // Add validation pipe here
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
 
   // Enable Cross-Origin Resource Sharing (CORS)
   // Allows your frontend (running on a different origin/port) to make requests to this API
