@@ -14,6 +14,8 @@ import { AuthModule } from './auth/auth.module';
 import { AuthController } from './auth/auth.controller';
 import { EventsModule } from './events/events.module';
 import { EventsController } from './events/events.controller';
+import { VenueModule } from './venue/venue.module';
+import { VenueController } from './venue/venue.controller';
 
 @Module({
   imports: [
@@ -36,6 +38,9 @@ import { EventsController } from './events/events.controller';
 
     // Import EventsModule - provides event-related functionality (database operations)
     EventsModule,
+
+    // Import VenueuModule - provides event-related functionality (database operations)
+    VenueModule,
 
     // ClientsModule - Registers microservice clients for inter-service communication
     // This gateway communicates with other microservices via RabbitMQ (RMQ)
@@ -78,7 +83,12 @@ import { EventsController } from './events/events.controller';
   ],
   // Controllers - Handle incoming HTTP requests and return responses
   // GatewayController handles routes like GET /health
-  controllers: [GatewayController, AuthController, EventsController],
+  controllers: [
+    GatewayController,
+    AuthController,
+    EventsController,
+    VenueController,
+  ],
   // Providers - Services, guards, factories that can be injected into other providers
   // GatewayService is a standard service (marked with @Injectable)
   providers: [GatewayService],
