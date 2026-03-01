@@ -1,8 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Venue } from './venue.schema';
 import { Model, Types } from 'mongoose';
 import { CreateVenueDto, UpdateVenueDto } from './venue.dto';
+import { rpcNotFound } from '@app/rpc';
 
 @Injectable()
 export class VenueService {
@@ -25,13 +26,13 @@ export class VenueService {
   //#region Find One
   async findOneVenue(id: string): Promise<Venue> {
     if (!Types.ObjectId.isValid(id)) {
-      throw new NotFoundException(`Invalid ObjectId: ${id}`);
+      rpcNotFound(`Invalid ObjectId: ${id}`);
     }
 
     const venue = await this.venueModel.findById(id).exec();
 
     if (!venue) {
-      throw new NotFoundException(`Venue with id ${id} not found`);
+      rpcNotFound(`Venue with id ${id} not found`);
     }
 
     return venue;
@@ -44,7 +45,7 @@ export class VenueService {
     updateVenueDto: UpdateVenueDto,
   ): Promise<Venue> {
     if (!Types.ObjectId.isValid(id)) {
-      throw new NotFoundException(`Invalid ObjectId: ${id}`);
+      rpcNotFound(`Invalid ObjectId: ${id}`);
     }
 
     const venue = await this.venueModel
@@ -52,7 +53,7 @@ export class VenueService {
       .exec();
 
     if (!venue) {
-      throw new NotFoundException(`Venue with id ${id} not found`);
+      rpcNotFound(`Venue with id ${id} not found`);
     }
     return venue;
   }
@@ -61,13 +62,13 @@ export class VenueService {
   //#region Delete Venue
   async deleteVenue(id: string): Promise<void> {
     if (!Types.ObjectId.isValid(id)) {
-      throw new NotFoundException(`Invalid ObjectId: ${id}`);
+      rpcNotFound(`Invalid ObjectId: ${id}`);
     }
 
     const venue = await this.venueModel.findByIdAndDelete(id).exec();
 
     if (!venue) {
-      throw new NotFoundException(`Venue with id ${id} not found`);
+      rpcNotFound(`Venue with id ${id} not found`);
     }
 
     console.log(`Venue Deleted: `, { venue });

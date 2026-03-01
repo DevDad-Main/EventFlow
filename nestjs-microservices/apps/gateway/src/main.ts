@@ -1,23 +1,25 @@
 import { NestFactory } from '@nestjs/core';
 import { GatewayModule } from './gateway.module';
-import { Logger, ValidationPipe } from '@nestjs/common';
+import {
+  Logger,
+  ValidationPipe,
+  ExceptionFilter,
+  ArgumentsHost,
+} from '@nestjs/common';
+import { RpcException } from '@nestjs/microservices';
+import { mapRPCErrorToHttp } from '@app/rpc';
 
 /**
  * Bootstrap function - Entry point for the NestJS application.
  * NestFactory creates an application instance from the root module.
  */
 async function bootstrap() {
-  // Set process title for easier identification in process lists (e.g., ps aux)
   process.title = 'gateway';
 
-  // Logger instance - used for logging messages with the prefix 'GatewayBootstrap'
   const logger = new Logger('GatewayBootstrap');
 
-  // Create the NestJS application instance from the root module (GatewayModule)
-  // This is where all your modules, controllers, and providers get wired together
   const app = await NestFactory.create(GatewayModule);
 
-  // Add validation pipe here
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -25,6 +27,15 @@ async function bootstrap() {
       transform: true,
     }),
   );
+
+  app.useGlobalFilters({
+    catch(exception: any, host: ArgumentsHost) {
+      if (exception instanceof RpcException) {
+        return mapRPCErrorToHttp(exception);
+      }
+      return exception;
+    },
+  });
 
   // Enable Cross-Origin Resource Sharing (CORS)
   // Allows your frontend (running on a different origin/port) to make requests to this API

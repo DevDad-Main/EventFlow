@@ -7,8 +7,9 @@
  * 3. Building a UserContext object from the verified token
  */
 import { createClerkClient, verifyToken } from '@clerk/backend';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UserContext } from './auth.types';
+import { rpcUnauthorized } from '@app/rpc';
 
 /**
  * @Injectable() - Marks this class as a provider that can be injected
@@ -86,7 +87,7 @@ export class AuthService {
 
       // Validate that we have a user ID - if not, token is invalid/malformed
       if (!clerkUserId) {
-        throw new UnauthorizedException('Token is not valid, missing user ID.');
+        rpcUnauthorized('Token is not valid, missing user ID.');
       }
 
       // Default role is 'user' - can be elevated to 'admin' in the database
@@ -162,9 +163,7 @@ export class AuthService {
       };
     } catch (e: any) {
       // Wrap any error as UnauthorizedException with a clean message
-      throw new UnauthorizedException(
-        e.message ?? 'Invalid or expired clerk token.',
-      );
+      rpcUnauthorized(e.message ?? 'Invalid or expired clerk token.');
     }
   }
 }

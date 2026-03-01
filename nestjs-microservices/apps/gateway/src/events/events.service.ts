@@ -1,8 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Event, EventDocument } from './event.schema';
 import { Model, Types } from 'mongoose';
 import { CreateEventDto } from './events.dto';
+import { rpcNotFound } from '@app/rpc';
 
 @Injectable()
 export class EventsService {
@@ -23,13 +24,13 @@ export class EventsService {
   //#region Find One
   async findOne(id: string): Promise<Event> {
     if (!Types.ObjectId.isValid(id)) {
-      throw new NotFoundException(`Invalid ObjectId: ${id}`);
+      rpcNotFound(`Invalid ObjectId: ${id}`);
     }
 
     const event = await this.eventModel.findById(id).populate('venueId').exec();
 
     if (!event) {
-      throw new NotFoundException(`Event with id ${id} not found`);
+      rpcNotFound(`Event with id ${id} not found`);
     }
 
     return event;
@@ -82,12 +83,12 @@ export class EventsService {
   //#region Delete Event
   async deleteEvent(id: string): Promise<void> {
     if (!Types.ObjectId.isValid(id)) {
-      throw new NotFoundException(`Invalid ObjectId: ${id}`);
+      rpcNotFound(`Invalid ObjectId: ${id}`);
     }
     const result = await this.eventModel.findByIdAndDelete(id);
 
     if (!result) {
-      throw new NotFoundException(`Event with id ${id} not found`);
+      rpcNotFound(`Event with id ${id} not found`);
     }
   }
   //#endregion
